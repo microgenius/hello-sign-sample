@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/sign")
 public class SignController {
+    public static final String SUCCESSFUL_WEBHOOK_RESPONSE_FOR_HELLO_SIGN = "Hello API Event Received";
+
     private Logger logger = LoggerFactory.getLogger(SignController.class);
 
     @Autowired
@@ -27,7 +29,7 @@ public class SignController {
     }
 
     @PostMapping("/webhook")
-    public void documentCallback(@RequestParam String json) {
+    public String documentCallback(@RequestParam String json) {
         try {
             final JSONObject jsonObject = new JSONObject(json);
             final Event callbackEventData = new Event(jsonObject);
@@ -36,5 +38,7 @@ public class SignController {
         } catch (final HelloSignException helloSignException) {
             logger.error("HelloSign callback data parse error: ", helloSignException);
         }
+
+        return SUCCESSFUL_WEBHOOK_RESPONSE_FOR_HELLO_SIGN;
     }
 }
