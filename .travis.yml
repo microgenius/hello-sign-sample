@@ -1,0 +1,15 @@
+sudo: required
+dist: trusty
+
+language: java
+jdk:
+  - oraclejdk11
+
+deploy:
+  provider: heroku
+  app: hello-sign-sample
+  api_key: $HEROKU_API_KEY
+  on:
+    repo: microgenius/hello-sign-sample
+    branch: master
+    tags: true
