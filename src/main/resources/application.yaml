@@ -2,4 +2,5 @@ server:
   port: ${PORT:8080}
 app:
   hello_sign:
-     api_key: ${HELLO_SIGN_API_KEY:not set}
+     api_key: 3b8e79205df3b66de6471f0164628cfdb6d5a7d324601321eb2c72622d09699b
+     template_id: 47f14cca076371c626e09a606154d499a8baae09
