@@ -1,6 +1,10 @@
 package com.tanriverdi.hellosignsample.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.hellosign.sdk.HelloSignClient;
 import com.hellosign.sdk.HelloSignException;
@@ -38,7 +42,10 @@ public class SignServiceImpl implements ISignService {
         templateSignatureRequest.setTemplateId(templateId);
         templateSignatureRequest.setTitle("Test Title for Document Sign");
         templateSignatureRequest.setSigner(DEFAULT_SIGNER_ROLE, signRequest.getEmail(), signRequest.getName());
-        templateSignatureRequest.addFile(dummyPdfResource.getFile());
+
+        try(final InputStream dummyPdfResourceInputStream = dummyPdfResource.getInputStream()) {
+            templateSignatureRequest.addFile(this.convertInputStreamToFile(dummyPdfResourceInputStream, dummyPdfResource.getFilename()));
+        }
 
         final HelloSignClient client = new HelloSignClient(helloSignApiKey);
         return client.sendTemplateSignatureRequest(templateSignatureRequest);
@@ -62,5 +69,14 @@ public class SignServiceImpl implements ISignService {
             default:
                 break;
         }
+    }
+
+    private File convertInputStreamToFile(InputStream inputStream, String filePath) throws IOException {
+        final File file = new File(filePath);
+        try (OutputStream output = new FileOutputStream(file, false)) {
+            inputStream.transferTo(output);
+        }
+
+        return file;
     }
 }
