@@ -1,7 +1,11 @@
 package com.tanriverdi.hellosignsample.controller;
 
+import java.io.IOException;
+
 import com.hellosign.sdk.HelloSignException;
 import com.hellosign.sdk.resource.Event;
+import com.hellosign.sdk.resource.SignatureRequest;
+import com.tanriverdi.hellosignsample.domain.DocumentSignRequest;
 import com.tanriverdi.hellosignsample.service.type.ISignService;
 
 import org.json.JSONObject;
@@ -9,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +29,8 @@ public class SignController {
     private ISignService signService;
 
     @PostMapping
-    public String signDocument() {
-        return signService.signDocument();
+    public SignatureRequest signDocument(@RequestBody DocumentSignRequest signRequest) throws HelloSignException, IOException {
+        return signService.signDocument(signRequest);
     }
 
     @PostMapping("/webhook")

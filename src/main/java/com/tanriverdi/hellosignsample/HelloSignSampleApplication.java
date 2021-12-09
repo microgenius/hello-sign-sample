@@ -9,5 +9,4 @@ public class HelloSignSampleApplication {
     public static void main(String[] args) {
         SpringApplication.run(HelloSignSampleApplication.class, args);
     }
-
 }

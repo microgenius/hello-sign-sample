@@ -3,3 +3,4 @@ server:
 app:
   hello_sign:
      api_key: ${HELLO_SIGN_API_KEY:not set}
+     template_id: ${HELLO_SIGN_TEMPLATE_ID:not set}
