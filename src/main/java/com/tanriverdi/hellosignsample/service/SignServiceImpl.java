@@ -69,13 +69,12 @@ public class SignServiceImpl implements ISignService {
             return;
         }
 
-        logger.debug("Event data: {}", event);
         switch (event.getTypeString()) {
             case "signature_request_signed":
-                logger.info("Signature Request Signed");
+                logger.info("Signature Request Signed, detail: {}", event);
                 break;
             case "signature_request_sent":
-                logger.info("Signature Request Sent");
+                logger.info("Signature Request Sent, detail: {}", event);
                 break;
             default:
                 break;
