@@ -17,6 +17,8 @@ import com.tanriverdi.hellosignsample.service.type.ISignService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,9 @@ public class SignServiceImpl implements ISignService {
 
     private Logger logger = LoggerFactory.getLogger(SignServiceImpl.class);
 
+    @Value("${app.hello_sign.webhook_url}")
+    private String helloSignWebHookUrl;
+
     @Value("${app.hello_sign.api_key}")
     private String helloSignApiKey;
 
@@ -34,6 +39,12 @@ public class SignServiceImpl implements ISignService {
 
     @Value("classpath:data/dummy.pdf")
     private Resource dummyPdfResource;
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initCallbackAction() throws HelloSignException {
+        final HelloSignClient helloSignClient = new HelloSignClient(helloSignApiKey);
+        helloSignClient.setCallback(helloSignWebHookUrl);
+    }
 
     @Override
     public SignatureRequest signDocument(DocumentSignRequest signRequest) throws HelloSignException, IOException {
