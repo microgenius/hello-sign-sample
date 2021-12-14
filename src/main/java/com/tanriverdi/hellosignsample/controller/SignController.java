@@ -40,7 +40,7 @@ public class SignController {
     }
 
     @PostMapping("/with_form_fields")
-    public SignatureRequest signDocumentWithFormFields(MultipleSignerDocumentSignRequest signRequest) throws Exception {
+    public SignatureRequest signDocumentWithFormFields(@RequestBody MultipleSignerDocumentSignRequest signRequest) throws Exception {
         return signService.signDocumentWithFormFields(signRequest);
     }
 
