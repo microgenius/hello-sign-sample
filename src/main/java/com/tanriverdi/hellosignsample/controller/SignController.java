@@ -6,6 +6,7 @@ import com.hellosign.sdk.HelloSignException;
 import com.hellosign.sdk.resource.Event;
 import com.hellosign.sdk.resource.SignatureRequest;
 import com.tanriverdi.hellosignsample.domain.DocumentSignRequest;
+import com.tanriverdi.hellosignsample.domain.MultipleSignerDocumentSignRequest;
 import com.tanriverdi.hellosignsample.service.type.ISignService;
 
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class SignController {
     }
 
     @PostMapping("/with_file")
-    public SignatureRequest signDocumentWithFile(@RequestBody DocumentSignRequest signRequest) throws IOException, HelloSignException {
+    public SignatureRequest signDocumentWithFile(@RequestBody MultipleSignerDocumentSignRequest signRequest) throws IOException, HelloSignException {
         return signService.signDocumentWithFile(signRequest);
     }
 

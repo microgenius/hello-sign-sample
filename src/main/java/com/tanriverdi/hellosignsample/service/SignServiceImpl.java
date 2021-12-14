@@ -12,6 +12,7 @@ import com.hellosign.sdk.resource.Event;
 import com.hellosign.sdk.resource.SignatureRequest;
 import com.hellosign.sdk.resource.TemplateSignatureRequest;
 import com.tanriverdi.hellosignsample.domain.DocumentSignRequest;
+import com.tanriverdi.hellosignsample.domain.MultipleSignerDocumentSignRequest;
 import com.tanriverdi.hellosignsample.service.type.ISignService;
 
 import org.slf4j.Logger;
@@ -21,12 +22,13 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class SignServiceImpl implements ISignService {
     public static final String DEFAULT_SIGNER_ROLE = "Signer";
 
-    private Logger logger = LoggerFactory.getLogger(SignServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(SignServiceImpl.class);
 
     @Value("${app.hello_sign.webhook_url}")
     private String helloSignWebHookUrl;
@@ -63,20 +65,27 @@ public class SignServiceImpl implements ISignService {
     }
 
     @Override
-    public SignatureRequest signDocumentWithFile(final DocumentSignRequest signRequest) throws HelloSignException, IOException {
-        final SignatureRequest request = new SignatureRequest();
-        request.setTitle("NDA with Acme Co.");
-        request.setSubject("The NDA we talked about");
-        request.setMessage("Please sign this NDA and then we can discuss more. Let me know if you have any questions.");
-        request.addSigner(signRequest.getEmail(), signRequest.getName());
-        request.setTestMode(true);
+    public SignatureRequest signDocumentWithFile(final MultipleSignerDocumentSignRequest signRequest) throws Exception {
+        final SignatureRequest signatureRequestForFile = new SignatureRequest();
+        signatureRequestForFile.setTitle("NDA with Acme Co.");
+        signatureRequestForFile.setSubject("The NDA we talked about");
+        signatureRequestForFile.setMessage("Please sign this NDA and then we can discuss more. Let me know if you have any questions.");
+        signatureRequestForFile.setTestMode(true);
 
-        try(final InputStream dummyPdfResourceInputStream = dummyPdfResource.getInputStream()) {
-            request.addFile(this.convertInputStreamToFile(dummyPdfResourceInputStream, dummyPdfResource.getFilename()));
+        if (CollectionUtils.isEmpty(signRequest.getSigners())) {
+            throw new Exception("signers required");
         }
 
-        HelloSignClient client = new HelloSignClient(helloSignApiKey);
-        return client.sendSignatureRequest(request);
+        for (final DocumentSignRequest signer : signRequest.getSigners()) {
+            signatureRequestForFile.addSigner(signer.getEmail(), signer.getName());
+        }
+
+        try(final InputStream dummyPdfResourceInputStream = dummyPdfResource.getInputStream()) {
+            signatureRequestForFile.addFile(this.convertInputStreamToFile(dummyPdfResourceInputStream, dummyPdfResource.getFilename()));
+        }
+
+        final HelloSignClient client = new HelloSignClient(helloSignApiKey);
+        return client.sendSignatureRequest(signatureRequestForFile);
     }
 
     @Override
