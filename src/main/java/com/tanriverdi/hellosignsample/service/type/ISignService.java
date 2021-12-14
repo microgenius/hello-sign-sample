@@ -8,7 +8,9 @@ import com.hellosign.sdk.resource.SignatureRequest;
 import com.tanriverdi.hellosignsample.domain.DocumentSignRequest;
 
 public interface ISignService {
-    SignatureRequest signDocument(DocumentSignRequest signRequest) throws HelloSignException, IOException;
+    SignatureRequest signDocumentWithTemplate(DocumentSignRequest signRequest) throws HelloSignException, IOException;
+
+    SignatureRequest signDocumentWithFile(DocumentSignRequest signRequest) throws HelloSignException, IOException;
 
     void documentCallback(Event event) throws HelloSignException;
 }

@@ -28,9 +28,14 @@ public class SignController {
     @Autowired
     private ISignService signService;
 
-    @PostMapping
-    public SignatureRequest signDocument(@RequestBody DocumentSignRequest signRequest) throws HelloSignException, IOException {
-        return signService.signDocument(signRequest);
+    @PostMapping("/with_template")
+    public SignatureRequest signDocumentWithTemplate(@RequestBody DocumentSignRequest signRequest) throws HelloSignException, IOException {
+        return signService.signDocumentWithTemplate(signRequest);
+    }
+
+    @PostMapping("/with_file")
+    public SignatureRequest signDocumentWithFile(@RequestBody DocumentSignRequest signRequest) throws IOException, HelloSignException {
+        return signService.signDocumentWithFile(signRequest);
     }
 
     @PostMapping("/webhook")

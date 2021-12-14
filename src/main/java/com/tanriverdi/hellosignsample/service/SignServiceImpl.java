@@ -47,7 +47,7 @@ public class SignServiceImpl implements ISignService {
     }
 
     @Override
-    public SignatureRequest signDocument(DocumentSignRequest signRequest) throws HelloSignException, IOException {
+    public SignatureRequest signDocumentWithTemplate(DocumentSignRequest signRequest) throws HelloSignException, IOException {
         final TemplateSignatureRequest templateSignatureRequest = new TemplateSignatureRequest();
         templateSignatureRequest.setTestMode(true);
         templateSignatureRequest.setTemplateId(templateId);
@@ -60,6 +60,23 @@ public class SignServiceImpl implements ISignService {
 
         final HelloSignClient client = new HelloSignClient(helloSignApiKey);
         return client.sendTemplateSignatureRequest(templateSignatureRequest);
+    }
+
+    @Override
+    public SignatureRequest signDocumentWithFile(final DocumentSignRequest signRequest) throws HelloSignException, IOException {
+        final SignatureRequest request = new SignatureRequest();
+        request.setTitle("NDA with Acme Co.");
+        request.setSubject("The NDA we talked about");
+        request.setMessage("Please sign this NDA and then we can discuss more. Let me know if you have any questions.");
+        request.addSigner(signRequest.getEmail(), signRequest.getName());
+        request.setTestMode(true);
+
+        try(final InputStream dummyPdfResourceInputStream = dummyPdfResource.getInputStream()) {
+            request.addFile(this.convertInputStreamToFile(dummyPdfResourceInputStream, dummyPdfResource.getFilename()));
+        }
+
+        HelloSignClient client = new HelloSignClient(helloSignApiKey);
+        return client.sendSignatureRequest(request);
     }
 
     @Override
