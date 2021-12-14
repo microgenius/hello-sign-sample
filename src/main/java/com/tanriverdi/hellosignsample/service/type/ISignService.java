@@ -13,5 +13,7 @@ public interface ISignService {
 
     SignatureRequest signDocumentWithFile(MultipleSignerDocumentSignRequest signRequest) throws Exception;
 
+    SignatureRequest signDocumentWithFormFields(MultipleSignerDocumentSignRequest signRequest) throws Exception;
+
     void documentCallback(Event event) throws HelloSignException;
 }

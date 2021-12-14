@@ -39,6 +39,11 @@ public class SignController {
         return signService.signDocumentWithFile(signRequest);
     }
 
+    @PostMapping("/with_form_fields")
+    public SignatureRequest signDocumentWithFormFields(MultipleSignerDocumentSignRequest signRequest) throws Exception {
+        return signService.signDocumentWithFormFields(signRequest);
+    }
+
     @PostMapping("/webhook")
     public String documentCallback(@RequestParam String json) {
         try {

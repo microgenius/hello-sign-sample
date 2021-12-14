@@ -11,6 +11,9 @@ import com.hellosign.sdk.HelloSignException;
 import com.hellosign.sdk.resource.Event;
 import com.hellosign.sdk.resource.SignatureRequest;
 import com.hellosign.sdk.resource.TemplateSignatureRequest;
+import com.hellosign.sdk.resource.support.Document;
+import com.hellosign.sdk.resource.support.FormField;
+import com.hellosign.sdk.resource.support.types.FieldType;
 import com.tanriverdi.hellosignsample.domain.DocumentSignRequest;
 import com.tanriverdi.hellosignsample.domain.MultipleSignerDocumentSignRequest;
 import com.tanriverdi.hellosignsample.service.type.ISignService;
@@ -86,6 +89,67 @@ public class SignServiceImpl implements ISignService {
 
         final HelloSignClient client = new HelloSignClient(helloSignApiKey);
         return client.sendSignatureRequest(signatureRequestForFile);
+    }
+
+    @Override
+    public SignatureRequest signDocumentWithFormFields(final MultipleSignerDocumentSignRequest signRequest) throws Exception {
+        final SignatureRequest signatureRequestForFormFields = new SignatureRequest();
+        signatureRequestForFormFields.setTitle("NDA with Acme Co.");
+        signatureRequestForFormFields.setSubject("The NDA we talked about");
+        signatureRequestForFormFields.setMessage("Please sign this NDA and then we can discuss more. Let me know if you have any questions.");
+        signatureRequestForFormFields.setTestMode(true);
+
+        if (CollectionUtils.isEmpty(signRequest.getSigners())) {
+            throw new Exception("signers required");
+        }
+
+        for (final DocumentSignRequest signer : signRequest.getSigners()) {
+            signatureRequestForFormFields.addSigner(signer.getEmail(), signer.getName());
+        }
+
+        final Document document = new Document();
+        try(final InputStream dummyPdfResourceInputStream = dummyPdfResource.getInputStream()) {
+            document.setFile(this.convertInputStreamToFile(dummyPdfResourceInputStream, dummyPdfResource.getFilename()));
+        }
+
+        final int widthForField = 100;
+        final int heightForField = 16;
+        final  int padding = 10;
+        int currentX = 100;
+        int currentY = 300;
+        for (int i = 0; i < signRequest.getSigners().size(); i++) {
+            final FormField signature = new FormField();
+            signature.setApiId("signature_cd2def5c" + i);
+            signature.setName("");
+            signature.setType(FieldType.SIGNATURE);
+            signature.setX(currentX);
+            signature.setY(currentY);
+            signature.setWidth(widthForField);
+            signature.setHeight(heightForField);
+            signature.setSigner(i);
+            document.addFormField(signature);
+
+            currentY += heightForField + padding;
+
+            final FormField dateSigned = new FormField();
+            dateSigned.setApiId("date_60329879" + i);
+            dateSigned.setName("");
+            dateSigned.setType(FieldType.DATE_SIGNED);
+            dateSigned.setX(currentX);
+            dateSigned.setY(currentY);
+            dateSigned.setWidth(widthForField);
+            dateSigned.setHeight(heightForField);
+            dateSigned.setSigner(i);
+            document.addFormField(dateSigned);
+
+            currentX += widthForField + padding;
+            currentY += heightForField + padding;
+        }
+
+        signatureRequestForFormFields.addDocument(document);
+
+        final HelloSignClient client = new HelloSignClient(helloSignApiKey);
+        return client.sendSignatureRequest(signatureRequestForFormFields);
     }
 
     @Override
