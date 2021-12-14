@@ -35,7 +35,7 @@ public class SignController {
     }
 
     @PostMapping("/with_file")
-    public SignatureRequest signDocumentWithFile(@RequestBody MultipleSignerDocumentSignRequest signRequest) throws IOException, HelloSignException {
+    public SignatureRequest signDocumentWithFile(@RequestBody MultipleSignerDocumentSignRequest signRequest) throws Exception {
         return signService.signDocumentWithFile(signRequest);
     }
 
