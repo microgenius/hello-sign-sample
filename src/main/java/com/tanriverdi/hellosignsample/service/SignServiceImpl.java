@@ -127,6 +127,7 @@ public class SignServiceImpl implements ISignService {
             signature.setWidth(widthForField);
             signature.setHeight(heightForField);
             signature.setSigner(i);
+            signature.setIsRequired(true);
             document.addFormField(signature);
 
             currentY += heightForField + padding;
@@ -140,6 +141,7 @@ public class SignServiceImpl implements ISignService {
             dateSigned.setWidth(widthForField);
             dateSigned.setHeight(heightForField);
             dateSigned.setSigner(i);
+            dateSigned.setIsRequired(true);
             document.addFormField(dateSigned);
 
             currentX += widthForField + padding;
